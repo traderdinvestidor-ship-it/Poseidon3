@@ -16,76 +16,24 @@ from src.payment import is_premium, unlock_premium, generate_real_pix, verify_pa
 st.set_page_config(page_title="Poseidon Investimentos", layout="wide", page_icon="🔱")
 
 # Load CSS
-with open("style.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+try:
+    with open("style.css", encoding="utf-8") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+except Exception as e:
+    st.warning("⚠️ Aviso: Não foi possível carregar o estilo visual (style.css). O sistema continua funcional.")
 
-if 'user' not in st.session_state:
-    st.session_state.user = None
+if 'user' not in st.session_state or st.session_state.user is None:
+    st.session_state.user = {"email": "admin@poseidon.ai", "name": "Investidor", "picture": None}
 if 'run_analysis' not in st.session_state:
     st.session_state.run_analysis = False
 if 'rebalance_results' not in st.session_state:
     st.session_state.rebalance_results = None
 
-# --- AUTHENTICATION GATE ---
-def login_page():
-    # Centralização usando colunas nativas para evitar "caixas" desnecessárias
-    col1, col2, col3 = st.columns([0.5, 1, 0.5])
-    
-    with col2:
-        st.write("") # Espaçamento superior
-        st.write("")
-        st.markdown('<h1 style="text-align:center; font-size: 4rem; margin-bottom: 0;">🔱</h1>', unsafe_allow_html=True)
-        st.markdown('<h1 style="text-align:center; margin-top: 0;">Poseidon AI</h1>', unsafe_allow_html=True)
-        st.markdown('<p style="text-align:center; color:#888; font-size:1.1rem; margin-bottom:2rem;">O Futuro dos seus Investimentos</p>', unsafe_allow_html=True)
-        
-        st.markdown('<p style="text-align:center; margin-bottom:2rem;">Faça login para acessar o terminal quantitativo.</p>', unsafe_allow_html=True)
-        
-        login_url = get_login_url()
-        if login_url:
-            st.markdown(f"""
-                <a href="{login_url}" target="_self" style="text-decoration: none;">
-                    <button style="
-                        width: 100%;
-                        background: linear-gradient(90deg, #00d4ff 0%, #005f73 100%);
-                        color: white;
-                        border: none;
-                        padding: 18px 20px;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        font-weight: bold;
-                        font-size: 16px;
-                        box-shadow: 0 4px 25px rgba(0, 212, 255, 0.3);
-                        text-transform: uppercase;
-                        letter-spacing: 2px;
-                        transition: transform 0.2s;
-                    ">🔑 Entrar com Google</button>
-                </a>
-            """, unsafe_allow_html=True)
-        else:
-            st.error("Erro ao configurar login. Verifique as credenciais.")
-
-# Process OAuth Callback
-query_params = st.query_params
-if "code" in query_params and st.session_state.user is None:
-    with st.spinner("Autenticando..."):
-        code = query_params.get("code")
-        state = query_params.get("state")
-        user_info = get_user_info(code, state)
-        if user_info:
-            st.session_state.user = user_info
-            # Clear URL params
-            st.query_params.clear()
-            st.rerun()
-
-# Check if user is logged in
-if st.session_state.user is None:
-    login_page()
-    st.stop()
+# (Sistema de login removido para acesso direto)
 
 # --- PREMIUM CHECK ---
 def check_premium():
     try:
-        from src.payment import is_premium
         return is_premium(st.session_state.user.get("email"))
     except Exception:
         return False
