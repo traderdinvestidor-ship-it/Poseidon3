@@ -9,31 +9,35 @@ def is_premium(email=None):
     """
     data = load_config()
     
-    # Se a flag global estiver ativa, libera para todos (Admin/Dev mode)
-    if data.get("is_premium", False):
-        return True
+    # SEGURANÇA: Força o retorno Falso se não houver e-mail
+    if not email:
+        return False
     
-    if email:
-        premium_users = data.get("premium_emails", [])
-        return email in premium_users
-    
-    return False
+    # Verifica estritamente se o e-mail está na lista de pagantes
+    premium_users = data.get("premium_emails", [])
+    if not isinstance(premium_users, list):
+        return False
+        
+    return email in premium_users
 
 def unlock_premium(email=None):
     """
     Ativa o status premium.
     Se o e-mail for fornecido, adiciona à lista de e-mails premium.
-    Caso contrário, ativa o flag global.
     """
     data = load_config()
     
     if email:
-        if "premium_emails" not in data:
+        # Garante que a lista existe
+        if "premium_emails" not in data or not isinstance(data["premium_emails"], list):
             data["premium_emails"] = []
+            
         if email not in data["premium_emails"]:
             data["premium_emails"].append(email)
-    else:
-        data["is_premium"] = True
+            
+        # LIMPEZA: Remove a flag global antiga se ela existir no arquivo para evitar erros futuros
+        if "is_premium" in data:
+            del data["is_premium"]
         
     save_config(data)
     return True
