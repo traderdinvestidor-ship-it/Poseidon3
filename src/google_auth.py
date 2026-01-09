@@ -14,6 +14,10 @@ SCOPES = [
 def create_flow(state=None):
     """Cria o fluxo OAuth usando as credenciais do st.secrets, detectando ambiente local/prod."""
     try:
+        # Tenta pegar as URIs do secrets
+        prod_uri = st.secrets["google_oauth"].get("redirect_uri")
+        local_uri = st.secrets["google_oauth"].get("redirect_uri_local")
+
         # Detecta se estamos rodando localmente (localhost ou 127.0.0.1)
         # Em produção (Streamlit Cloud), o serverAddress é diferente de localhost
         server_addr = st.get_option("browser.serverAddress")

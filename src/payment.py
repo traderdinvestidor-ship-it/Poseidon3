@@ -9,11 +9,15 @@ def is_premium(email=None):
     """
     data = load_config()
     
+    # Se a flag global estiver ativa, libera para todos (Admin/Dev mode)
+    if data.get("is_premium", False):
+        return True
+    
     if email:
         premium_users = data.get("premium_emails", [])
         return email in premium_users
-        
-    return data.get("is_premium", False)
+    
+    return False
 
 def unlock_premium(email=None):
     """
@@ -39,7 +43,7 @@ def generate_real_pix(email, name="Investidor Poseidon"):
     Gera um pagamento Pix real usando a API do Mercado Pago.
     """
     # Valor fixo da assinatura
-    AMOUNT = 99.90
+    AMOUNT = 49.99
     
     payment = create_pix_payment(AMOUNT, email, name)
     if payment:

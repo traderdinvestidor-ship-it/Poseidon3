@@ -33,11 +33,12 @@ def get_optimized_allocation(tickers, risk_profile):
     """
     try:
         # Fetch 2 years of history
-        data = yf.download(tickers, period="2y", interval="1d", progress=False, auto_adjust=True)['Close']
-        if data.empty or len(tickers) < 2:
+        data = yf.download(tickers, period="2y", interval="1d", progress=False, auto_adjust=True)
+        
+        if data.empty or 'Close' not in data.columns or len(tickers) < 2:
             return None
             
-        returns = data.pct_change().dropna()
+        returns = data['Close'].pct_change().dropna()
         mean_returns = returns.mean() * 252
         cov_matrix = returns.cov() * 252
         

@@ -16,6 +16,7 @@ def get_fii_metrics(ticker):
     
     try:
         response = requests.get(url, headers=headers)
+        response.raise_for_status() # Garante que a requisição foi bem sucedida
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # P/VP - Usually in a 'value' class within a specific container
