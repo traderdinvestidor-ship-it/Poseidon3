@@ -1,0 +1,187 @@
+/* 
+   POSEIDON QUANTUM AI - PROFESSIONAL STYLING 
+   Author: Antigravity AI
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+    --primary: #00d4ff;
+    --primary-glow: rgba(0, 212, 255, 0.4);
+    --secondary: #005f73;
+    --accent: #ffb703;
+    --bg-dark: #020111;
+    --bg-gradient: linear-gradient(135deg, #020111 0%, #050531 100%);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-main: #e0e0e0;
+    --text-muted: #888888;
+}
+
+html,
+body,
+[class*="css"] {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+}
+
+/* Main Background */
+.stApp {
+    background: var(--bg-gradient);
+}
+
+/* Custom Containers (Banners) */
+.ui-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ui-card:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(0, 212, 255, 0.2);
+}
+
+/* Premium Banner specific */
+.premium-card {
+    background: linear-gradient(135deg, rgba(255, 183, 3, 0.05) 0%, rgba(238, 155, 0, 0.1) 100%);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 20px rgba(255, 183, 3, 0.15);
+}
+
+.premium-card h2,
+.premium-card h3 {
+    color: var(--accent) !important;
+}
+
+/* Glassmorphism for Streamlit Native Elements */
+div[data-testid="metric-container"],
+.stTabs,
+div.stForm {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Neon Typography */
+h1,
+h2,
+h3 {
+    background: linear-gradient(90deg, #fff, var(--primary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+    font-weight: 800 !important;
+    letter-spacing: -0.5px;
+}
+
+/* Metrics Styling */
+.stMetric label {
+    color: var(--text-muted) !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stMetric div[data-testid="stMetricValue"] {
+    color: var(--accent) !important;
+    font-weight: 800 !important;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Professional Buttons */
+.stButton>button {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white !important;
+    border: none !important;
+    padding: 12px 28px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2) !important;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-glow) !important;
+    filter: brightness(1.1);
+}
+
+/* Sidebar Styling */
+section[data-testid="stSidebar"] {
+    background: #01010a !important;
+    border-right: 1px solid var(--glass-border);
+}
+
+/* Lock Overlay refactor */
+.lock-area {
+    position: relative;
+    padding: 40px;
+    border: 1px dashed var(--accent);
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    overflow: hidden;
+}
+
+.lock-area::after {
+    content: '🔒';
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    opacity: 0.5;
+}
+
+/* Auth Page Layout */
+.auth-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    max-width: 500px;
+    margin: 40px auto;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Dataframe refinement */
+.stDataFrame {
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
