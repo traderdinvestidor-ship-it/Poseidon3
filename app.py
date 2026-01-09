@@ -127,7 +127,7 @@ if st.session_state.get('show_payment', False) and not user_premium:
                 st.image(f"data:image/png;base64,{pay['qr_code_base64']}", width=200)
             
             st.code(pay['code'], language="text")
-            st.caption("Investimento: R$ 99,90 (Acesso Vitalício)")
+            st.caption("Investimento: R$ 49,99 (Acesso Vitalício)")
             
             v_col1, v_col2 = st.columns(2)
             with v_col1:
