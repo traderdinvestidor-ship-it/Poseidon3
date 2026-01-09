@@ -4,21 +4,40 @@ from src.mercadopago_client import create_pix_payment, check_payment_status
 def is_premium(email=None):
     """
     Verifica se o status premium está ativo.
-    Se o e-mail for fornecido, verifica na lista de e-mails premium.
-    Caso contrário, verifica o flag global.
     """
     data = load_config()
     
-    # SEGURANÇA: Força o retorno Falso se não houver e-mail
+    # --- AUTO-CORREÇÃO DE BUG (LIMPEZA FORÇADA) ---
+    # Se o arquivo tiver a configuração antiga que libera geral, deletamos ela agora.
+    if "is_premium" in data:
+        try:
+            print(f"[SEGURANÇA] Removendo configuração antiga 'is_premium' do arquivo...")
+            del data["is_premium"]
+            save_config(data)
+            data = load_config() # Recarrega limpo
+        except Exception as e:
+            print(f"[ERRO] Não foi possível limpar config: {e}")
+    # ---------------------------------------------
+
+    # 1. Se não tem e-mail, bloqueia
     if not email:
         return False
     
-    # Verifica estritamente se o e-mail está na lista de pagantes
+    # 2. Verifica estritamente a lista de pagantes
     premium_users = data.get("premium_emails", [])
+    
+    # Se a lista estiver corrompida (não for lista), bloqueia
     if not isinstance(premium_users, list):
         return False
         
-    return email in premium_users
+    # 3. Veredito
+    is_authorized = email in premium_users
+    
+    # DEBUG: Mostra no terminal o que está acontecendo
+    if is_authorized:
+        print(f"[PREMIUM] Acesso LIBERADO para: {email}")
+    
+    return is_authorized
 
 def unlock_premium(email=None):
     """
@@ -35,7 +54,7 @@ def unlock_premium(email=None):
         if email not in data["premium_emails"]:
             data["premium_emails"].append(email)
             
-        # LIMPEZA: Remove a flag global antiga se ela existir no arquivo para evitar erros futuros
+        # Garante limpeza aqui também
         if "is_premium" in data:
             del data["is_premium"]
         
