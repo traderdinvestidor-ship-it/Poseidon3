@@ -112,13 +112,6 @@ if st.session_state.get('show_payment', False) and not user_premium:
         - **Monte Carlo**: Projeções estatísticas de futuro.
         - **Calculadora IA**: Rebalanceamento automático.
         """)
-        
-        if st.button("🔓 Demo Mode (Local Unlock)", use_container_width=True):
-            from src.payment import unlock_premium
-            if unlock_premium(st.session_state.user.get("email")):
-                st.success("Premium Ativado!")
-                time.sleep(1)
-                st.rerun()
     
     with col2:
         st.subheader("💳 Checkout Pix")
