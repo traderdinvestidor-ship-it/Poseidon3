@@ -86,6 +86,20 @@ else:
     st.sidebar.info("👤 CONTA BÁSICA")
     if st.sidebar.button("🚀 Liberar Acesso Total (PIX)"):
         st.session_state.show_payment = True
+    
+    # --- ÁREA ADMINISTRATIVA ---
+    with st.sidebar.expander("🔐 Área Admin (Privado)"):
+        admin_pass = st.text_input("Senha Admin", type="password")
+        if admin_pass == "poseidon2026":
+            st.write("---")
+            st.subheader("Liberar Cliente")
+            email_to_unlock = st.text_input("E-mail do Cliente")
+            if st.button("Liberar Acesso Premium"):
+                if "@" in email_to_unlock:
+                    unlock_premium(email_to_unlock)
+                    st.success(f"Acesso liberado: {email_to_unlock}")
+                else:
+                    st.error("E-mail inválido")
 
 if st.session_state.get('show_payment', False) and not user_premium:
     st.markdown('<div class="ui-card premium-card">', unsafe_allow_html=True)
