@@ -22,14 +22,43 @@ try:
 except Exception as e:
     st.warning("⚠️ Aviso: Não foi possível carregar o estilo visual (style.css). O sistema continua funcional.")
 
-if 'user' not in st.session_state or st.session_state.user is None:
-    st.session_state.user = {"email": "admin@poseidon.ai", "name": "Investidor", "picture": None}
+if 'user' not in st.session_state:
+    st.session_state.user = None
 if 'run_analysis' not in st.session_state:
     st.session_state.run_analysis = False
 if 'rebalance_results' not in st.session_state:
     st.session_state.rebalance_results = None
 
-# (Sistema de login removido para acesso direto)
+# --- AUTHENTICATION GATE ---
+def login_page():
+    col1, col2, col3 = st.columns([0.5, 1, 0.5])
+    
+    with col2:
+        st.write("") 
+        st.write("")
+        st.markdown('<h1 style="text-align:center; font-size: 4rem; margin-bottom: 0;">🔱</h1>', unsafe_allow_html=True)
+        st.markdown('<h1 style="text-align:center; margin-top: 0;">Poseidon AI</h1>', unsafe_allow_html=True)
+        st.markdown('<p style="text-align:center; color:#888; font-size:1.1rem; margin-bottom:2rem;">O Futuro dos seus Investimentos</p>', unsafe_allow_html=True)
+        
+        st.markdown('<p style="text-align:center; margin-bottom:1rem;">Para acessar o terminal e liberar o Pix, insira seu e-mail:</p>', unsafe_allow_html=True)
+        
+        email = st.text_input("Seu E-mail", placeholder="seu@email.com")
+        
+        if st.button("🚀 ENTRAR NO TERMINAL", use_container_width=True):
+            if "@" in email and "." in email:
+                st.session_state.user = {
+                    "email": email.lower().strip(),
+                    "name": email.split("@")[0].capitalize(),
+                    "picture": None
+                }
+                st.rerun()
+            else:
+                st.error("Por favor, insira um e-mail válido para continuar.")
+
+# Check if user is logged in
+if st.session_state.user is None:
+    login_page()
+    st.stop()
 
 # --- PREMIUM CHECK ---
 def check_premium():
