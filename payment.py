@@ -7,17 +7,16 @@ def is_premium(email=None):
     """
     data = load_config()
     
-    # --- AUTO-CORREÇÃO DE BUG (LIMPEZA FORÇADA) ---
+    # --- AUTO-CORREÇÃO (LIMPEZA DE BUG) ---
     # Se o arquivo tiver a configuração antiga que libera geral, deletamos ela agora.
     if "is_premium" in data:
         try:
-            print(f"[SEGURANÇA] Removendo configuração antiga 'is_premium' do arquivo...")
             del data["is_premium"]
             save_config(data)
             data = load_config() # Recarrega limpo
-        except Exception as e:
-            print(f"[ERRO] Não foi possível limpar config: {e}")
-    # ---------------------------------------------
+        except Exception:
+            pass
+    # --------------------------------------
 
     # 1. Se não tem e-mail, bloqueia
     if not email:
@@ -26,18 +25,12 @@ def is_premium(email=None):
     # 2. Verifica estritamente a lista de pagantes
     premium_users = data.get("premium_emails", [])
     
-    # Se a lista estiver corrompida (não for lista), bloqueia
+    # Se a lista não existir ou estiver corrompida, bloqueia
     if not isinstance(premium_users, list):
         return False
         
-    # 3. Veredito
-    is_authorized = email in premium_users
-    
-    # DEBUG: Mostra no terminal o que está acontecendo
-    if is_authorized:
-        print(f"[PREMIUM] Acesso LIBERADO para: {email}")
-    
-    return is_authorized
+    # 3. Só libera se o e-mail estiver EXATAMENTE na lista
+    return email in premium_users
 
 def unlock_premium(email=None):
     """
@@ -54,12 +47,13 @@ def unlock_premium(email=None):
         if email not in data["premium_emails"]:
             data["premium_emails"].append(email)
             
-        # Garante limpeza aqui também
+        # SEGURANÇA: Remove a flag global se ela existir
         if "is_premium" in data:
             del data["is_premium"]
         
-    save_config(data)
-    return True
+        save_config(data)
+        return True
+    return False
 
 def generate_real_pix(email, name="Investidor Poseidon"):
     """
