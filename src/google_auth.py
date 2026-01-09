@@ -14,26 +14,19 @@ SCOPES = [
 def create_flow(state=None):
     """Cria o fluxo OAuth usando as credenciais do st.secrets, detectando ambiente local/prod."""
     try:
-        # Pega a URI de produção dos segredos
-        prod_uri = st.secrets["google_oauth"]["redirect_uri"]
-        
-        # Detecta porta e endereço atual do Streamlit
-        current_port = st.get_option("browser.serverPort")
-        
         # Detecta se estamos rodando localmente (localhost ou 127.0.0.1)
-        is_local = "localhost" in st.get_option("browser.serverAddress") or \
-                   "127.0.0.1" in st.get_option("browser.serverAddress") or \
-                   not st.get_option("browser.serverAddress") or \
-                   st.get_option("browser.serverAddress") == "0.0.0.0"
+        # Em produção (Streamlit Cloud), o serverAddress é diferente de localhost
+        server_addr = st.get_option("browser.serverAddress")
+        is_local = server_addr in ["localhost", "127.0.0.1"]
         
-        if is_local:
-            # Em ambiente local, tentamos primeiro o que está no secrets.
-            # Se não houver, montamos dinamicamente com a porta atual.
-            redirect_uri = st.secrets["google_oauth"].get("redirect_uri_local")
-            if not redirect_uri:
-                redirect_uri = f"http://localhost:{current_port}"
-        else:
+        # Só usa a URI local se houver certeza de que é local E a URI local existe
+        if is_local and local_uri:
+            redirect_uri = local_uri
+        elif prod_uri:
             redirect_uri = prod_uri
+        else:
+            # Fallback seguro para produção se nada for achado
+            redirect_uri = f"https://poseidon-investidorpro.streamlit.app/"
         
         client_config = {
             "web": {
