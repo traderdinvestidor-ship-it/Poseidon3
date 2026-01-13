@@ -238,10 +238,19 @@ if st.session_state.run_analysis:
                 
                 if best_stocks is not None and not best_stocks.empty and 'symbol' in best_stocks.columns:
                     best_stocks['Timing'] = best_stocks['symbol'].apply(get_technical_signals)
+                    
                     st.dataframe(
-                        best_stocks[['symbol', 'name', 'price', 'pe_ratio', 'roe', 'Timing']].style.format({
-                            'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}', 'roe': '{:.2%}'
-                        })
+                        best_stocks[['symbol', 'name', 'price', 'pe_ratio', 'roe', 'Timing']],
+                        column_config={
+                            "symbol": "Ativo",
+                            "name": "Nome da Empresa",
+                            "price": st.column_config.NumberColumn("Preço Atual", format="R$ %.2f"),
+                            "pe_ratio": st.column_config.NumberColumn("P/L", format="%.2f"),
+                            "roe": st.column_config.NumberColumn("ROE", format="%.2%"),
+                            "Timing": "Sinal Técnico"
+                        },
+                        hide_index=True,
+                        use_container_width=True
                     )
                     st.caption("*Ranking baseado em P/L baixo e ROE alto.")
                 else:
@@ -290,10 +299,18 @@ if st.session_state.run_analysis:
 
                     if best_bdr is not None and not best_bdr.empty and 'symbol' in best_bdr.columns:
                         best_bdr['Timing'] = best_bdr['symbol'].apply(get_technical_signals)
+                        
                         st.dataframe(
-                            best_bdr[['symbol', 'name', 'price', 'pe_ratio', 'Timing']].style.format({
-                                'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}'
-                            })
+                            best_bdr[['symbol', 'name', 'price', 'pe_ratio', 'Timing']],
+                            column_config={
+                                "symbol": "Ativo",
+                                "name": "Nome",
+                                "price": st.column_config.NumberColumn("Preço", format="R$ %.2f"),
+                                "pe_ratio": st.column_config.NumberColumn("P/L", format="%.2f"),
+                                "Timing": "Sinal Técnico"
+                            },
+                            hide_index=True,
+                            use_container_width=True
                         )
                         st.caption("*Integrando ativos globais para diversificação geográfica.")
                     else:
