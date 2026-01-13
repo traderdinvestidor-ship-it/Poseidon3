@@ -54,6 +54,17 @@ def login_page():
                 st.rerun()
             else:
                 st.error("Por favor, insira um e-mail válido para continuar.")
+        
+        st.write("")
+        st.write("")
+        
+        # --- ÁREA DO VÍDEO DE APRESENTAÇÃO ---
+        with st.expander("🎥 Ver Apresentação do Sistema (Demo)", expanded=False):
+            st.markdown("Veja como o **QuantumAsset AI** analisa o mercado em tempo real:")
+            # SINTAXE: st.video("SEU_LINK_DO_YOUTUBE_AQUI")
+            # Exemplo (substitua pelo seu link final):
+            st.video("https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE") 
+            st.caption("👆 Assista à demonstração completa das funcionalidades.")
 
 # Check if user is logged in
 if st.session_state.user is None:
@@ -209,9 +220,6 @@ if st.session_state.run_analysis:
     fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='white')
     st.plotly_chart(fig, width='stretch')
     
-    amount_distribution = {k: v * user_amount for k, v in allocation.items()}
-    st.info(f"💰 Distribuição Financeira: {amount_distribution}")
-
     st.subheader("🎯 Seleção Tática de Ativos (Top Picks)")
     tabs = st.tabs(["🇧🇷 Ações Brasil", "🌎 Exterior (BDRs/ETFs)", "₿ Cripto", "🏗️ FIIs"])
     
@@ -220,13 +228,24 @@ if st.session_state.run_analysis:
             with st.spinner("Scanner de Ações BR em execução..."):
                 raw_stocks = get_batch_asset_data(STOCK_TICKERS)
                 best_stocks = score_stocks(raw_stocks)
-                best_stocks['Timing'] = best_stocks['symbol'].apply(get_technical_signals)
-                st.dataframe(
-                    best_stocks[['symbol', 'name', 'price', 'pe_ratio', 'roe', 'Timing']].style.format({
-                        'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}', 'roe': '{:.2%}'
-                    })
-                )
-                st.caption("*Ranking baseado em P/L baixo e ROE alto.")
+                
+                # --- CORREÇÃO DE SEGURANÇA REFORÇADA ---
+                # Garante que o DataFrame não está vazio e normaliza nomes de colunas
+                if best_stocks is not None and not best_stocks.empty:
+                    # Se a coluna 'symbol' não existir, tenta renomear variantes comuns
+                    if 'symbol' not in best_stocks.columns:
+                        best_stocks = best_stocks.rename(columns={'Symbol': 'symbol', 'Ticker': 'symbol'})
+                
+                if best_stocks is not None and not best_stocks.empty and 'symbol' in best_stocks.columns:
+                    best_stocks['Timing'] = best_stocks['symbol'].apply(get_technical_signals)
+                    st.dataframe(
+                        best_stocks[['symbol', 'name', 'price', 'pe_ratio', 'roe', 'Timing']].style.format({
+                            'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}', 'roe': '{:.2%}'
+                        })
+                    )
+                    st.caption("*Ranking baseado em P/L baixo e ROE alto.")
+                else:
+                    st.warning("⚠️ Não foi possível carregar dados das ações ou nenhum ativo atendeu aos critérios.")
                 
                 # MARKOWITZ OPTIMIZATION BUTTON
                 if user_premium:
@@ -261,13 +280,24 @@ if st.session_state.run_analysis:
                 with st.spinner("Scanner Global em execução..."):
                     raw_bdr = get_batch_asset_data(BDR_TICKERS)
                     best_bdr = score_stocks(raw_bdr)
-                    best_bdr['Timing'] = best_bdr['symbol'].apply(get_technical_signals)
-                    st.dataframe(
-                        best_bdr[['symbol', 'name', 'price', 'pe_ratio', 'Timing']].style.format({
-                            'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}'
-                        })
-                    )
-                    st.caption("*Integrando ativos globais para diversificação geográfica.")
+                    
+                    # --- CORREÇÃO DE SEGURANÇA REFORÇADA ---
+                    # Garante que o DataFrame não está vazio e normaliza nomes de colunas
+                    if best_bdr is not None and not best_bdr.empty:
+                        # Se a coluna 'symbol' não existir, tenta renomear variantes comuns
+                        if 'symbol' not in best_bdr.columns:
+                            best_bdr = best_bdr.rename(columns={'Symbol': 'symbol', 'Ticker': 'symbol'})
+
+                    if best_bdr is not None and not best_bdr.empty and 'symbol' in best_bdr.columns:
+                        best_bdr['Timing'] = best_bdr['symbol'].apply(get_technical_signals)
+                        st.dataframe(
+                            best_bdr[['symbol', 'name', 'price', 'pe_ratio', 'Timing']].style.format({
+                                'price': 'R$ {:.2f}', 'pe_ratio': '{:.2f}'
+                            })
+                        )
+                        st.caption("*Integrando ativos globais para diversificação geográfica.")
+                    else:
+                        st.warning("⚠️ Dados de BDRs indisponíveis no momento.")
             else:
                 st.markdown("""
                 <div class="lock-area">
@@ -460,3 +490,4 @@ else:
 
 st.markdown("---")
 st.caption("🔴 DISCLAIMER: Esta é uma ferramenta de simulação educacional alimentada por IA. Não constitui recomendação de investimento. Faça sua própria análise.")
+
