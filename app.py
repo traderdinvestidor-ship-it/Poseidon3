@@ -490,4 +490,3 @@ else:
 
 st.markdown("---")
 st.caption("🔴 DISCLAIMER: Esta é uma ferramenta de simulação educacional alimentada por IA. Não constitui recomendação de investimento. Faça sua própria análise.")
-
