@@ -9,15 +9,24 @@ def score_stocks(df):
     
     df = df.copy()
     
-    # Filter cleanup
-    df = df.dropna(subset=['roe', 'pe_ratio'])
+    # Garante que as colunas numéricas existam e preenche vazios com 0
+    cols_to_fix = ['roe', 'pe_ratio', 'price']
+    for col in cols_to_fix:
+        if col not in df.columns:
+            df[col] = 0.0
+        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     
-    # Basic Filters
-    df = df[df['roe'] > 0.10] # ROE > 10%
-    df = df[df['pe_ratio'] > 0] # Profitable
+    # Filtro básico: Apenas remove se não tiver preço (dado inválido)
+    df = df[df['price'] > 0]
+    
+    if df.empty:
+        return df
     
     # Scoring: Rank by Cheapest (Low P/E) + Best Quality (High ROE)
-    df['rank_pe'] = df['pe_ratio'].rank(ascending=True)
+    # Tratamento para P/L zero (evita que empresas sem lucro fiquem no topo)
+    df['pe_clean'] = df['pe_ratio'].replace(0, 1000)
+    
+    df['rank_pe'] = df['pe_clean'].rank(ascending=True)
     df['rank_roe'] = df['roe'].rank(ascending=False)
     df['score'] = df['rank_pe'] + df['rank_roe']
     

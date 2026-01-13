@@ -36,13 +36,13 @@ def get_asset_info(ticker):
         data = {
             'symbol': ticker,
             'name': info.get('longName', ticker),
-            'price': info.get('currentPrice', info.get('regularMarketPrice', 0.0)),
+            'price': info.get('currentPrice', info.get('regularMarketPrice', 0.0)) or 0.0,
             'sector': info.get('sector', 'Unknown'),
-            'pe_ratio': info.get('forwardPE', info.get('trailingPE')),
-            'roe': info.get('returnOnEquity'),
-            'dividend_yield': info.get('dividendYield'),
-            'beta': info.get('beta'),
-            'market_cap': info.get('marketCap')
+            'pe_ratio': info.get('forwardPE', info.get('trailingPE', 0.0)) or 0.0,
+            'roe': info.get('returnOnEquity', 0.0) or 0.0,
+            'dividend_yield': info.get('dividendYield', 0.0) or 0.0,
+            'beta': info.get('beta', 0.0) or 0.0,
+            'market_cap': info.get('marketCap', 0.0) or 0.0
         }
         return data
     except Exception:
@@ -59,3 +59,4 @@ def get_batch_asset_data(tickers):
         if info:
             data_list.append(info)
     return pd.DataFrame(data_list)
+
