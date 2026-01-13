@@ -17,7 +17,7 @@ def score_stocks(df):
         df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     
     # Filtro básico: Apenas remove se não tiver preço (dado inválido)
-    df = df[df['price'] > 0]
+    df = df[df['price'] > 0.01] # Garante que o preço é maior que 1 centavo
     
     if df.empty:
         return df
